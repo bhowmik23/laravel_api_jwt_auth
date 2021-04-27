@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\User\ClassComment;
+use App\Models\User\ComplainBox;
+use App\Models\User\Course;
+use App\Models\User\Result;
+use App\Models\User\ResultDetail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,5 +59,28 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function classComments()
+    {
+        return $this->belongsToMany(ClassComment::class);
+    }
+
+    public function compalins()
+    {
+        return $this->hasMany(ComplainBox::class);
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
+    public function results()
+    {
+        return $this->hasMany(Result::class);
+    }
+    public function resultDetails()
+    {
+        return $this->hasMany(ResultDetail::class);
     }
 }
