@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\User\Course;
 use App\Models\User\Option;
 use App\Models\User\Question;
 use App\Models\User\Exam;
 use App\Models\User\Mark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ExamController extends Controller
 {
@@ -19,32 +22,37 @@ class ExamController extends Controller
      */
     public function index()
     {
-        $exams = Exam::all();
-        return response()->json($exams);
+        $user_exams = Cache::remember('user_exams', 22 * 60, function () {
+            $enroll_courses = User::find(Auth::user()->id)->enrollCourses;
+            $exams = [];
+            foreach ($enroll_courses as $enroll_course) {
+                $exam = Course::find($enroll_course->course_id)->exams;
+                $exams[] = $exam;
+            }
+            return  $exams;
+        });
+
+        return response()->json($user_exams);
+        // $exams = Exam::all();
+        // return response()->json($exams);
     }
 
-    public function examQuestions($exam_id)
+    public function getExamQuestions($id)
     {
-        $exam = Exam::where('id', $exam_id)->first();
-        return response()->json($exam);
-    }
-
-    public function getExamQuestions($exam_id)
-    {
-        $questions = Question::where("exam_id", $exam_id)->get();
-        $exam_questions = [];
-        foreach ($questions as $item) {
-            $question = Question::where('id', $item->id)->first();
-            $options = Option::where('question_id', $question->id)->get();
-            $exam_question = [
-                "exam_questions" => $question,
-                "options" => $options,
-            ];
-            $exam_questions[] = $exam_question;
-        }
-        $exam_questions = $exam_questions;
-
-        return response()->json($exam_questions);
+        $user_exam_questions = Cache::remember('user_exam_questions', 22 * 60, function () use($id){
+            $questions = Exam::find($id)->questions;
+            $exam_questions = [];
+            foreach ($questions as $question) {
+                $options = Question::find($question->id)->options;
+                $exam = [
+                    "git addquestion" => $question,
+                    "options" => $options
+                ];
+                $exam_questions[] = $exam;
+            }
+            return $exam_questions;
+        });
+        return response()->json($user_exam_questions);
     }
 
     public function getResult(Request $request)

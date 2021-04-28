@@ -4,6 +4,7 @@
 
 namespace Database\Factories\User;
 
+use App\Models\User;
 use App\Models\User\Exam;
 use App\Models\User\Course;
 use App\Models\User\Subject;
@@ -28,8 +29,7 @@ class ExamFactory extends Factory
         return [
             'course_id' => $this->faker->randomElement(Course::pluck('id')->toArray()),
             'subject_id' => $this->faker->randomElement(Subject::pluck('id')->toArray()),
-            'exam_type' => $this->faker->numberBetween(1, 10),
-            'title' => $this->faker->regexify('[A-Za-z0-9]{20}'),
+            'title' => $this->faker->word(10),
             'banner' => $this->faker->imageUrl('60', '60'),
             'duration' => $this->faker->numberBetween(10, 100),
             'total_question' => $this->faker->numberBetween(10, 100),
@@ -37,9 +37,8 @@ class ExamFactory extends Factory
             'negative_marks' => $this->faker->numberBetween(1, 2),
             'date' => $this->faker->date,
             'order' => $this->faker->numberBetween(1, 4),
-            'is_active' => $this->faker->numberBetween(0, 1),
-            'created_by' => $this->faker->numberBetween(0, 1),
-            'updated_by' => $this->faker->numberBetween(0, 1),
+            'created_by' =>$this->faker->randomElement(User::pluck('id')->toArray()),
+            'updated_by' =>$this->faker->randomElement(User::pluck('id')->toArray()),
         ];
     }
 }

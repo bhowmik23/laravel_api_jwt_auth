@@ -1,9 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\User\Course;
 use App\Models\User\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ScheduleController extends Controller
 {
@@ -14,7 +19,17 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        //
+        $user_schedules = Cache::remember('user_schedules', 22 * 60, function () {
+            $enroll_courses = User::find(Auth::user()->id)->enrollCourses;
+            $schedules = [];
+            foreach ($enroll_courses as $enroll_course) {
+                $schedule = Course::find($enroll_course->course_id)->schedules;
+                $schedules[] = $schedule;
+            }
+            return  $schedules;
+        });
+
+        return response()->json($user_schedules);
     }
 
     /**

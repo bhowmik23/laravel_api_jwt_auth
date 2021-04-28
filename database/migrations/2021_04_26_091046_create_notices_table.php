@@ -15,8 +15,8 @@ class CreateNoticesTable extends Migration
     {
         Schema::create('notices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id');
-            $table->unsignedBigInteger('subject_id');
+            $table->unsignedBigInteger('course_id')->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->integer('is_active')->default(1);

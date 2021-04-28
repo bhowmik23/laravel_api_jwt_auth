@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\User\ClassResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ClassResourceController extends Controller
 {
@@ -14,7 +16,12 @@ class ClassResourceController extends Controller
      */
     public function index()
     {
-        //
+        $class_resources = Cache::remember('class_resources', 22 * 60, function () {
+
+            $resources = ClassResource::all();
+            return $resources;
+        });
+        return response()->json($class_resources);
     }
 
     /**

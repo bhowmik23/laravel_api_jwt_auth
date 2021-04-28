@@ -15,15 +15,15 @@ class CreateSchedulesTable extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sub_id');
+            $table->unsignedBigInteger('course_id');
             $table->string('title');
             $table->string('banner')->nullable();
             $table->string('date');
             $table->integer('is_active')->default(1);
 
-            $table->foreign('sub_id')
+            $table->foreign('course_id')
                 ->references('id')
-                ->on('subjects')
+                ->on('courses')
                 ->onDelete('cascade');
             $table->timestamps();
         });

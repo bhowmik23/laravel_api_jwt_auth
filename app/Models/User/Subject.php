@@ -21,8 +21,12 @@ class Subject extends Model
         return $this->hasMany(Notice::class);
     }
 
-    public function schedules()
+    public function course()
     {
-        return $this->hasMany(Schedule::class);
+        return $this->belongsTo(Course::class);
+    }
+    public function classes()
+    {
+        return $this->hasMany(Classs::class, 'subject_id', 'id');
     }
 }

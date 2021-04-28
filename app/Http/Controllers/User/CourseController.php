@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\User\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class CourseController extends Controller
@@ -16,14 +18,17 @@ class CourseController extends Controller
      */
     public function index()
     {
-        // $courses = Course::where('subscription_id', 2484)->get();
-        // return response()->json($courses);
-        // $courses = Course::all();
-        // $courses = Cache::put('courses', Course::all(), 10);
-        $courses = Cache::remember('courses', 22*60, function() {
-            return Course::all();
+        $user_courses = Cache::remember('user_courses', 22 * 60, function () {
+
+            $enroll_courses = User::find(Auth::user()->id)->enrollCourses;
+            $courses = [];
+            foreach ($enroll_courses as $enroll_course) {
+                $course = Course::find($enroll_course->course_id);
+                $courses[] = $course;
+            }
+            return  $courses;
         });
-        return response()->json($courses);
+        return response()->json($user_courses);
     }
 
     /**

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\User\Course;
 use App\Models\User\Notice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class NoticeController extends Controller
@@ -16,10 +19,17 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        $notices = Cache::remember('courses', 22 * 60, function () {
-            return Notice::all();
+        $user_notices = Cache::remember('user_notices', 22 * 60, function () {
+            $enroll_courses = User::find(Auth::user()->id)->enrollCourses;
+            $notices = [];
+            foreach($enroll_courses as $enroll_course){
+                $notice = Course::find($enroll_course->course_id)->notices;
+                $notices[] =$notice;
+            }
+            return  $notices;
         });
-        return response()->json($notices);
+
+        return response()->json($user_notices);
     }
 
     /**

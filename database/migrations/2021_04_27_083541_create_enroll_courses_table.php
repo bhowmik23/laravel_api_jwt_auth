@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClasssesTable extends Migration
+class CreateEnrollCoursesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,16 @@ class CreateClasssesTable extends Migration
      */
     public function up()
     {
-        Schema::create('classses', function (Blueprint $table) {
+        Schema::create('enroll_courses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id');
-            $table->unsignedBigInteger('subject_id');
-            $table->string('title');
-            $table->string('type')->nullable();
-            $table->string('banner')->nullable();
-            $table->string('url_link')->nullable();
-            $table->text('description')->nullable();
-            $table->string('date')->nullable();;
-            $table->string('time')->nullable();;
-            $table->integer('is_active')->default(1);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('course_id')->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
 
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
             $table->foreign('course_id')
                 ->references('id')
                 ->on('courses')
@@ -45,6 +42,6 @@ class CreateClasssesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('classes');
+        Schema::dropIfExists('enroll_courses');
     }
 }

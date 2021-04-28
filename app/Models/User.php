@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User\ClassComment;
 use App\Models\User\ComplainBox;
 use App\Models\User\Course;
+use App\Models\User\EnrollCourse;
 use App\Models\User\Result;
 use App\Models\User\ResultDetail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -82,5 +83,9 @@ class User extends Authenticatable implements JWTSubject
     public function resultDetails()
     {
         return $this->hasMany(ResultDetail::class);
+    }
+    public function enrollCourses()
+    {
+        return $this-> hasMany(EnrollCourse::class, 'user_id', 'id');
     }
 }

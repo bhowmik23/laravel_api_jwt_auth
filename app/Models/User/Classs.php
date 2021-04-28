@@ -15,4 +15,8 @@ class Classs extends Model
     {
         return $this->hasMany(ClassComment::class);
     }
+    public function classResources()
+    {
+        return $this->hasMany(ClassResource::class, 'class_id', 'id');
+    }
 }
